@@ -1,5 +1,9 @@
 # Detection Lab
 
+Fork replacing Splunk with Elasticsearch, nxlog, and Kibana.
+
+Kibana API is lacking. Only indexing Sysmon and Event logs currently.
+
 ## Purpose
 This lab has been designed with defenders in mind. Its primary purpose is to allow the user to quickly build a Windows domain that comes pre-loaded with security tooling and some best practices when it comes to system logging configurations. It can easily be modified to fit most needs or expanded to include additional hosts.
 

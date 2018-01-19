@@ -8,6 +8,21 @@ echo "deb http://repo.mongodb.org/apt/ubuntu "$(lsb_release -sc)"/mongodb-org/3.
 apt-get update
 apt-get install -y jq whois build-essential git docker docker-compose unzip python3-dev python3-pip mongodb-org
 
+# install ELK
+git clone https://github.com/deviantony/docker-elk.git
+cd docker-elk
+sudo docker-compose up -d
+sleep 30
+#create default kibana index for nxlog
+curl -XPUT 'http://localhost:9200/_template/nxlog' \
+	   -H 'Content-Type: application/json' \
+           -d '{ "template" : "nxlog*", "mappings" : { "_default_" : { "properties": { "EventTime": { "type": "date", "format": "YYYY-MM-dd HH:mm:ss" } } } } }'
+echo "Testing Kibana..."
+curl http://localhost:5601
+EOF
+
+cd /home/vagrant
+
 # Install Golang v1.8
 wget https://storage.googleapis.com/golang/go1.8.linux-amd64.tar.gz
 tar -xvf go1.8.linux-amd64.tar.gz

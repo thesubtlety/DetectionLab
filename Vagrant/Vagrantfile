@@ -5,6 +5,10 @@ Vagrant.configure("2") do |config|
     cfg.vm.hostname = "logger"
     config.vm.provision :shell, path: "bootstrap.sh"
     cfg.vm.network :private_network, ip: "192.168.38.5", gateway: "192.168.38.1", dns: "8.8.8.8"
+    #config.vm.network :forwarded_port, guest: 8000, host: 8000, id: "logger_splunk", auto_correct: true
+    config.vm.network :forwarded_port, guest: 8412, host: 8412, id: "logger_kolide", auto_correct: true
+    config.vm.network :forwarded_port, guest: 5601, host: 5601, id: "logger_kibana", auto_correct: true
+    config.vm.network :forwarded_port, guest: 9200, host: 9200, id: "logger_elasticsearch", auto_correct: true
 
     cfg.vm.provider "vmware_fusion" do |v, override|
       v.memory = 2048
@@ -34,6 +38,9 @@ Vagrant.configure("2") do |config|
     cfg.winrm.basic_auth_only = true
 
     cfg.vm.communicator = "winrm"
+    cfg.vm.network :forwarded_port, guest: 5985, host: 5985, id: "winrm", auto_correct: true
+    cfg.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", auto_correct: true
+    cfg.vm.network :forwarded_port, guest: 3389, host: 3389, id: "rdp", auto_correct: true
     cfg.vm.network :private_network, ip: "192.168.38.2", gateway: "192.168.38.1"
 
     cfg.vm.provision "shell", path: "scripts/fix-second-network.ps1", privileged: false, args: "192.168.38.2"
@@ -42,8 +49,8 @@ Vagrant.configure("2") do |config|
     cfg.vm.provision "shell", path: "scripts/provision.ps1", privileged: false
     cfg.vm.provision "shell", path: "scripts/download_palantir_wef.ps1", privileged: true
     cfg.vm.provision "shell", path: "scripts/download_palantir_osquery.ps1", privileged: true
-    cfg.vm.provision "shell", path: "scripts/install-splunkuf.ps1", privileged: true
-    cfg.vm.provision "shell", path: "scripts/install-inputsconf.ps1", privileged: true
+    #cfg.vm.provision "shell", path: "scripts/install-splunkuf.ps1", privileged: true
+    #cfg.vm.provision "shell", path: "scripts/install-inputsconf.ps1", privileged: true
     cfg.vm.provision "shell", path: "scripts/install-utilities.ps1", privileged: true
     cfg.vm.provision "shell", path: "scripts/install-osquery.ps1", privileged: true
     cfg.vm.provision "shell", path: "scripts/install-caldera-agent.ps1", privileged: true
@@ -53,6 +60,7 @@ Vagrant.configure("2") do |config|
     cfg.vm.provision "shell", path: "scripts/configure-powershelllogging.ps1", privileged: true
     cfg.vm.provision "shell", path: "scripts/install-autorunstowineventlog.ps1", privileged: true
     cfg.vm.provision "shell", path: "scripts/configure-AuditingPolicyGPOs.ps1", privileged: true
+    cfg.vm.provision "shell", path: "scripts/install-nxlog.ps1", privileged: true
     cfg.vm.provision "shell", inline: "Set-SmbServerConfiguration -AuditSmb1Access $true -Force", privileged: true
 
     cfg.vm.provider "vmware_fusion" do |v, override|
@@ -77,6 +85,9 @@ Vagrant.configure("2") do |config|
     cfg.vm.hostname = "wef"
 
     cfg.vm.communicator = "winrm"
+    cfg.vm.network :forwarded_port, guest: 5985, host: 5986, id: "winrm", auto_correct: true
+    cfg.vm.network :forwarded_port, guest: 22, host: 2223, id: "ssh", auto_correct: true
+    cfg.vm.network :forwarded_port, guest: 3389, host: 3390, id: "rdp", auto_correct: true
     cfg.vm.network :private_network, ip: "192.168.38.3", gateway: "192.168.38.1", dns: "192.168.38.2"
 
     cfg.vm.provision "shell", path: "scripts/fix-second-network.ps1", privileged: false, args: "-ip 192.168.38.3 -dns 192.168.38.2"
@@ -86,15 +97,16 @@ Vagrant.configure("2") do |config|
     cfg.vm.provision "shell", path: "scripts/download_palantir_wef.ps1", privileged: true
     cfg.vm.provision "shell", path: "scripts/download_palantir_osquery.ps1", privileged: true
     cfg.vm.provision "shell", path: "scripts/install-wefsubscriptions.ps1", privileged: true
-    cfg.vm.provision "shell", path: "scripts/install-splunkuf.ps1", privileged: true
-    cfg.vm.provision "shell", path: "scripts/install-windows_ta.ps1", privileged: true
+    #cfg.vm.provision "shell", path: "scripts/install-splunkuf.ps1", privileged: true
+    #cfg.vm.provision "shell", path: "scripts/install-windows_ta.ps1", privileged: true
     cfg.vm.provision "shell", path: "scripts/install-utilities.ps1", privileged: true
     cfg.vm.provision "shell", path: "scripts/install-osquery.ps1", privileged: true
     cfg.vm.provision "shell", path: "scripts/install-caldera-agent.ps1", privileged: true
-    cfg.vm.provision "shell", path: "scripts/install-inputsconf.ps1", privileged: true
+    #cfg.vm.provision "shell", path: "scripts/install-inputsconf.ps1", privileged: true
     cfg.vm.provision "shell", path: "scripts/install-sysinternals.ps1", privileged: true
     cfg.vm.provision "shell", path: "scripts/configure-pslogstranscriptsshare.ps1", privileged: true
     cfg.vm.provision "shell", path: "scripts/install-autorunstowineventlog.ps1", privileged: true
+    cfg.vm.provision "shell", path: "scripts/install-nxlog.ps1", privileged: true
     cfg.vm.provision "shell", inline: "Set-SmbServerConfiguration -AuditSmb1Access $true -Force", privileged: true
 
     cfg.vm.provider "vmware_fusion" do |v, override|
@@ -119,6 +131,9 @@ Vagrant.configure("2") do |config|
     cfg.vm.hostname = "win10"
 
     cfg.vm.communicator = "winrm"
+    cfg.vm.network :forwarded_port, guest: 5985, host: 5987, id: "winrm", auto_correct: true
+    cfg.vm.network :forwarded_port, guest: 22, host: 2224, id: "ssh", auto_correct: true
+    cfg.vm.network :forwarded_port, guest: 3389, host: 3391, id: "rdp", auto_correct: true
     cfg.vm.network :private_network, ip: "192.168.38.4", gateway: "192.168.38.1", dns: "192.168.38.2"
 
     cfg.vm.provision "shell", path: "scripts/fix-second-network.ps1", privileged: false, args: "-ip 192.168.38.4 -dns 192.168.38.2"
@@ -127,13 +142,14 @@ Vagrant.configure("2") do |config|
     cfg.vm.provision "shell", path: "scripts/provision.ps1", privileged: false
     cfg.vm.provision "shell", path: "scripts/download_palantir_wef.ps1", privileged: true
     cfg.vm.provision "shell", path: "scripts/download_palantir_osquery.ps1", privileged: true
-    cfg.vm.provision "shell", path: "scripts/install-splunkuf.ps1", privileged: true
+    #cfg.vm.provision "shell", path: "scripts/install-splunkuf.ps1", privileged: true
     cfg.vm.provision "shell", path: "scripts/install-utilities.ps1", privileged: true
     cfg.vm.provision "shell", path: "scripts/install-osquery.ps1", privileged: true
     cfg.vm.provision "shell", path: "scripts/install-caldera-agent.ps1", privileged: true
-    cfg.vm.provision "shell", path: "scripts/install-inputsconf.ps1", privileged: true
+    #cfg.vm.provision "shell", path: "scripts/install-inputsconf.ps1", privileged: true
     cfg.vm.provision "shell", path: "scripts/install-sysinternals.ps1", privileged: true
     cfg.vm.provision "shell", path: "scripts/install-autorunstowineventlog.ps1", privileged: true
+    cfg.vm.provision "shell", path: "scripts/install-nxlog.ps1", privileged: true
 
     cfg.vm.provider "vmware_fusion" do |v, override|
       override.vm.box = "../Boxes/windows_10_vmware.box"
